@@ -17,7 +17,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        shell: bash
+        run: |
+          git init -q
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git fetch -q --depth 1 origin "${{ github.ref_name }}"
+          git checkout -q FETCH_HEAD
 
       - name: Generate production database.php from secrets
         shell: bash
