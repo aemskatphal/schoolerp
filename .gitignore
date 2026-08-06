@@ -1,0 +1,54 @@
+# CodeIgniter logs & cache
+application/logs/*
+application/cache/*
+!application/logs/index.html
+!application/cache/index.html
+
+# Local junk / debug / test files (never commit or deploy)
+-w
+cookies.txt
+counter.json
+dashboard.html
+debug_sql.txt
+catch_error.php
+phpinfo_test.php
+testinfo.php
+test_db.php
+test_error.php
+test_upload_dir.php
+tmp_columns.txt
+login3.html
+login_out.html
+login_output.html
+rebuild_clean.php
+import_corrupt_fix.php
+import_final.php
+import_tablespace.php
+import_tablespace2.php
+import_tablespace3.php
+fix_corrupt.php
+fix_corrupt2.php
+fix_all_columns.sql
+fix_schema.sql
+recovery_data.sql
+school_db_recovered.sql
+school_db_structure.sql
+
+# SQL dumps / backups - never commit DB exports
+*.sql
+
+# Uploaded files stay on the server, not in git
+# Only the default images the app references are tracked
+uploads/*
+!uploads/default.jpg
+!uploads/default.png
+!uploads/logo.png
+!uploads/user.jpg
+!uploads/word_media_image1.png
+!uploads/word_media_image2.png
+
+# OS / editor / IDE
+Thumbs.db
+.DS_Store
+.vscode/
+*.log
