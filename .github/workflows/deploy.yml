@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy to Hostinger (FTP)
+    name: Deploy to Hostinger (Archive + server-side extract)
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -64,24 +64,77 @@ jobs:
           print('database.php generated from secrets')
           PYEOF
 
-      - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/
-          dangerous-clean-slate: false
-          timeout: 3600000
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            **/installation/**
-            **/sql/**
-            **/dist/**
-            **/Reference code for system/**
-            **/application/logs/**
-            **/application/cache/**
-            **/*.log
+      - name: Build deploy.zip
+        shell: bash
+        run: |
+          zip -qr deploy.zip . -x \
+            ".git/*" ".github/*" "node_modules/*" \
+            "installation/*" "sql/*" "dist/*" \
+            "Reference code for system/*" \
+            "application/logs/*" "application/cache/*" \
+            "*.log" "deploy.zip"
+          ls -lh deploy.zip
+
+      - name: Create server-side extractor script
+        shell: bash
+        env:
+          EXTRACT_KEY: ${{ github.sha }}
+        run: |
+          cat > _extract.php <<'PHP'
+          <?php
+          @set_time_limit(0);
+          @ini_set('memory_limit', '512M');
+          $k = 'PLACEHOLDER';
+          if (empty($_GET['k']) || $_GET['k'] !== $k) {
+              http_response_code(403);
+              die('forbidden');
+          }
+          $src = __DIR__ . '/deploy.zip';
+          if (!file_exists($src)) { die('ZIP_MISSING'); }
+          $z = new ZipArchive();
+          if ($z->open($src) !== TRUE) { die('ZIP_OPEN_FAILED'); }
+          $n = $z->numFiles;
+          $ok = $z->extractTo(__DIR__);
+          $z->close();
+          if ($ok) {
+              @unlink($src);
+              echo "EXTRACT_OK $n";
+              @unlink(__FILE__);
+          } else {
+              echo "EXTRACT_FAIL";
+          }
+          PHP
+          sed -i "s/PLACEHOLDER/$EXTRACT_KEY/" _extract.php
+
+      - name: Upload archive + extractor via FTP
+        shell: bash
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          set -e
+          curl -sS --connect-timeout 60 -m 1200 --ftp-create-dirs \
+            -T deploy.zip -u "$FTP_USERNAME:$FTP_PASSWORD" \
+            "ftp://${{ secrets.FTP_HOST }}/public_html/deploy.zip"
+          curl -sS --connect-timeout 60 -m 120 \
+            -T _extract.php -u "$FTP_USERNAME:$FTP_PASSWORD" \
+            "ftp://${{ secrets.FTP_HOST }}/public_html/_extract.php"
+          echo "Upload complete"
+
+      - name: Trigger server-side extraction
+        shell: bash
+        env:
+          EXTRACT_KEY: ${{ github.sha }}
+        run: |
+          RESP=""
+          for i in 1 2 3; do
+            RESP=$(curl -sS --connect-timeout 60 -m 600 \
+              --resolve sswpsk.org:80:185.232.14.124 \
+              "http://sswpsk.org/_extract.php?k=$EXTRACT_KEY") && break
+            sleep 5
+          done
+          echo "Extract response: $RESP"
+          case "$RESP" in
+            EXTRACT_OK*) echo "Deployment extracted successfully";;
+            *) echo "::error::Extraction failed. Response: $RESP"; exit 1;;
+          esac
