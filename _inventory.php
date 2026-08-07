@@ -3,6 +3,7 @@ if (($_GET['k'] ?? '') !== 'OlioBfA2tTd4UgV8ZaYKzkyJ') { http_response_code(403)
 @set_time_limit(120);
 header('Content-Type: application/json; charset=utf-8');
 
+define('BASEPATH', __DIR__);
 $db = array('default' => array(
     'hostname' => 'localhost', 'username' => '', 'password' => '', 'database' => '', 'dbdriver' => 'mysqli'
 ));
