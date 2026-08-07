@@ -65,7 +65,7 @@ $config['permission_modules'] = array(
             'fees_template'      => array('name' => 'Fees Template',      'actions' => array('edit', 'delete', 'export')),
             'create_invoice'     => array('name' => 'Create Invoice',     'actions' => array()),
             'manage_invoice'     => array('name' => 'Manage Invoice',     'actions' => array('edit', 'delete', 'export')),
-            'manage_receipt'     => array('name' => 'Manage Receipt',     'actions' => array('edit', 'delete', 'export')),
+            'manage_receipt'     => array('name' => 'Manage Receipt',     'actions' => array('view', 'edit', 'delete', 'export')),
             'fees_report'        => array('name' => 'Fees Report',        'actions' => array()),
             'fees_notice_report' => array('name' => 'Fees Notice Report', 'actions' => array()),
             'fees_discount_report'=>array('name' => 'Fees Discount Report','actions' => array()),
