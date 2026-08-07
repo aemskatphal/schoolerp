@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 @import url(https://fonts.googleapis.com/css?family=Poppins:400,500,300,600,700);
 /*Theme Colors*/
 /*bootstrap Color*/
@@ -4250,7 +4250,7 @@ table.focus-on tbody tr.focused td {
 }
 /* Login- register pages */
 .login-register {
-  background: url(../../plugins/images/login-register.jpg) no-repeat center center / cover !important;
+  background: url(../../plugins/images/login.png) no-repeat center center / cover !important;
   height: 100%;
   position: fixed;
 }
