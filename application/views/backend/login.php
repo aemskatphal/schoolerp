@@ -19,7 +19,7 @@ $system_title = $this->db->get_where('settings', array('type' => 'system_title')
     <!-- animation CSS -->
     <link href="<?php echo base_url(); ?>optimum/css/animate.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="<?php echo base_url(); ?>optimum/css/style.css" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>optimum/css/style.css?v=2" rel="stylesheet">
     <!-- color CSS -->
     <link href="<?php echo base_url(); ?>optimum/css/colors/megna.css" id="theme" rel="stylesheet">
     <link href="<?php echo base_url(); ?>optimum/plugins/bower_components/toast-master/css/jquery.toast.css" rel="stylesheet">
