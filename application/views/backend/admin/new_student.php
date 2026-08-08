@@ -205,9 +205,9 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="col-md-12" for="example-text">Mother Tongue</label>
+                                <label class="col-md-12" for="example-text">Mother Tongue<span class="bg-require">*</span></label>
                                 <div class="col-sm-12">
-                                    <select name="mt_id" id="mt" class="form-control select2" style="width:100%">
+                                    <select name="mt_id" id="mt" class="form-control select2" style="width:100%" required>
                                         <option value="">Select</option>
                                         <?php foreach($mother_tongues as $row): ?>
                                             <option value="<?php echo $row['mother_tongue_id']; ?>"><?php echo html_escape($row['mother_tongue_name']); ?></option>
